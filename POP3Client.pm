@@ -229,6 +229,12 @@ sub Socket {
   $me->{'SOCKET'} = $socket;
 }
 
+sub AuthMode {
+  my $me = shift;
+  my $mode = shift;
+  return $me->{'AUTH_MODE'} unless $mode;
+  $me->{'AUTH_MODE'} = $mode;
+}
 
 #******************************************************************************
 #* set/query the USER
@@ -503,7 +509,8 @@ sub Login_CRAM_MD5
 
     my $hmac =
       Digest::HMAC_MD5::hmac_md5_hex(MIME::Base64::decode($1), $me->Pass());
-    $me->_sockprint(MIME::Base64::encode($me->User() . " $hmac", $me->EOL()));
+    (my $response = MIME::Base64::encode($me->User() . " $hmac")) =~ s/[\r\n]//g;
+    $me->_sockprint($response, $me->EOL());
 
     $line = $me->_sockread();
     chomp $line;
@@ -1282,7 +1289,7 @@ to STDERR.
 Another warning, it's impossible to differentiate between a timeout
 and a failure.
 
-If you pas a true value for USESSL, the port will be changed to 995 if
+If you pass a true value for USESSL, the port will be changed to 995 if
 it is not set or is 110.  Otherwise, it will use your port.  If USESSL
 is true, IO::Socket::SSL will be loaded.  If it is not in your perl,
 the call to connect will fail.
@@ -1360,7 +1367,10 @@ QUIT (invoking the Close method).  Can be reset with a Reset message.
 =item I<Connect>
 
 Start the connection to the POP3 server.  You can pass in the host and
-port.
+port.  Returns the number of messages in the mailbox, or -1 on a
+connection error.  The constructors return the value of Connect, so
+they will never return undef.  This will change in any version 3.x
+release, but never in a 2.x release.
 
 =item I<Close>
 

@@ -1,6 +1,12 @@
 Revision history for Perl extension Mail::POP3Client.
 
-This is version 2.14 of Mail::POP3Client.
+This is version 2.15 of Mail::POP3Client.
+
+2.15 2003/10/17
+	+ Create a method to set AuthMode (Jamie Le Tual)
+	+ Force Mime::Base64::encode base64 result into a single line
+	  (Jamie Le Tual)
+	+ Documenation updates
 
 2.14 2003/03/22
 	+ Fixed problem when using SSL connection with SSL socket

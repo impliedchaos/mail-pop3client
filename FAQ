@@ -93,6 +93,10 @@ line it sends you).  Some POP3 servers drop the connection after a failed
 authentication.  The servers I have tested against do not appear to do
 this.
 
+Another possibility that has been suggested is a situation with
+redundant POP servers using DNS round robin.  If the first address
+IO::Socket connects to is down, the module will fail to connect.
+
 
 7. How do I use an SSL connection?  (Thanks to Jamie LeTual)
 
