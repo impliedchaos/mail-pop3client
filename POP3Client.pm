@@ -15,6 +15,7 @@ package Mail::POP3Client;
 use strict;
 use Carp;
 use IO::Socket;
+use Config;
 
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
 
@@ -62,7 +63,9 @@ sub new
 	      AUTH_MODE => 'APOP',
 	      EOL => "\015\012",
 	      TIMEOUT => 60,
+	      STRIPCR => 0,
 	     };
+  $Config{osname} =~ /MacOS/i && ($self->{STRIPCR} = 1);
   bless( $self, $classname );
   $self->_init( @_ );
 
@@ -641,6 +644,11 @@ sub _sockread
 {
   my $me = shift;
   my $line = $me->Socket()->getline();
+
+  # Macs seem to leave CR's or LF's sitting on the socket.  This
+  # removes them.
+  $me->{STRIPCR} && ($line =~ s/^[\r]+//);
+  
   $me->Debug and carp "POP3 <- ", $line;
   return $line;
 }
