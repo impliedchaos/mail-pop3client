@@ -711,7 +711,9 @@ sub Body
 	$me->Message("Socket read failed for RETR");
 	return;
     }
-  } until $line =~ /^\s*$/;
+    $line =~ s/[\r\n]//g;
+  } until $line =~ /^(\s*|\.)$/;
+  $line =~ /^\.\s*$/ && return;  # we found a header only!  Lotus Notes seems to do this.
 
   while (1) {
     $line = $me->_sockread();
@@ -759,7 +761,9 @@ sub BodyToFile
 	$me->Message("Socket read failed for RETR");
 	return;
     }
-  } until $line =~ /^\s*$/;
+    $line =~ s/[\r\n]//g;
+  } until $line =~ /^(\s*|\.)$/;
+  $line =~ /^\.\s*$/ && return;  # we found a header only!  Lotus Notes seems to do this.
 
   while (1) {
     $line = $me->_sockread();
@@ -1294,7 +1298,7 @@ it is not set or is 110.  Otherwise, it will use your port.  If USESSL
 is true, IO::Socket::SSL will be loaded.  If it is not in your perl,
 the call to connect will fail.
 
-new returns a valid Mail::POP3CLient object in all cases.  To test for
+new returns a valid Mail::POP3Client object in all cases.  To test for
 a connection failure, you will need to check the number of messages:
 -1 indicates a connection error.  This will likely change sometime in
 the future to return undef on an error, setting $! as a side effect.
@@ -1367,10 +1371,10 @@ QUIT (invoking the Close method).  Can be reset with a Reset message.
 =item I<Connect>
 
 Start the connection to the POP3 server.  You can pass in the host and
-port.  Returns the number of messages in the mailbox, or -1 on a
-connection error.  The constructors return the value of Connect, so
-they will never return undef.  This will change in any version 3.x
-release, but never in a 2.x release.
+port.  Returns 1 if the connection succeeds, or 0 if it fails (Message
+will contain a reason).  The constructor always returns a blessed
+reference to a Mail::POP3Client obhect.  This may change in a version
+3.x release, but never in a 2.x release.
 
 =item I<Close>
 

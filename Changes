@@ -1,6 +1,11 @@
 Revision history for Perl extension Mail::POP3Client.
 
-This is version 2.15 of Mail::POP3Client.
+This is version 2.16 of Mail::POP3Client.
+
+2.16 2004/03/13
+	+ Correct documentation errors for Connect().
+	+ Fix problem with servers not returning an empty line after 
+	  headers when message body is blank.
 
 2.15 2003/10/17
 	+ Create a method to set AuthMode (Jamie Le Tual)
