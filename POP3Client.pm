@@ -4,7 +4,7 @@
 # Description:  POP3Client module - acts as interface to POP3 server
 # Author:       Sean Dowd <pop3client@dowds.net>
 #
-# Copyright (c) 1999  Sean Dowd.  All rights reserved.
+# Copyright (c) 1999,2000,2001  Sean Dowd.  All rights reserved.
 # This module is free software; you can redistribute it and/or modify
 # it under the same terms as Perl itself.
 #
@@ -72,7 +72,7 @@ sub new
   bless( $self, $classname );
   $self->_init( @_ );
 
-  if ( $self->User() && $self->Pass() )
+  if ( defined($self->User()) && defined($self->Pass()) )
     {
       $self->Connect();
     }
@@ -364,7 +364,7 @@ sub Connect
   $me->Message($msg);
   
   $me->State('AUTHORIZATION');
-  $me->User() and $me->Pass() and $me->Login();
+  defined($me->User()) and defined($me->Pass()) and $me->Login();
   
 } # end Connect
 
