@@ -1,0 +1,35 @@
+WHAT IS IT?
+
+This is a POP3 client module for perl5.  It provides an
+object-oriented interface to a POP3 server.  It can be used to write
+perl-based biff clients, mail readers, or whatever.  See the inline
+POD doco for more details.  (perldoc Mail::POP3Client)
+
+
+HOW DO I INSTALL/TEST IT?
+
+To install Mail::POP3Client:
+
+% perl Makefile.PL
+% make
+% make test
+% make install
+
+NOTE: if you want to test against a real mailbox, set the environment
+variable POPTESTACCOUNT to some POP3 account in the following format:
+user:password:host.
+
+% export POPTESTACCOUNT=jsmith:secret:pop3.my.do.main
+% make test
+
+
+WHERE IS THE DOCUMENTATION?
+
+The documentation is in the code in POD format.  To read it, use
+'perldoc Mail::POP3Client' or you can extract it to html using
+pod2html.
+
+
+Written by Sean Dowd <dowd@home.com> or <sdowd@arcmail.com>.
+
+
