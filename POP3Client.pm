@@ -427,7 +427,11 @@ sub Head
   do {
     $line = $me->_sockread();
     #    $line =~ /^\s*$|^\.\s*$/ or $header .= $line;
-    $line =~ /^\.\s*$/ or $header .= $line;
+    $line =~ /^\.\s*$/ or do {
+      # convert any '..' at the start of a line to '.'
+      $line =~ s/^\.\././;
+      $header .= $line;
+    };
   } until $line =~ /^\.\s*$/;
   
   return wantarray ? split(/\r?\n/, $header) : $header;
@@ -452,7 +456,11 @@ sub HeadAndBody
   
   do {
     $line = $me->_sockread();
-    $line =~ /^\.\s*$/ or $mandb .= $line;
+    $line =~ /^\.\s*$/ or do {
+      # convert any '..' at the start of a line to '.'
+      $line =~ s/^\.\././;
+      $mandb .= $line;
+    };
   } until $line =~ /^\.\s*$/;
   
   return wantarray ? split(/\r?\n/, $mandb) : $mandb;
@@ -483,7 +491,11 @@ sub Body
   
   do {
     $line = $me->_sockread();
-    $line =~ /^\.\s*$/ or $body .= $line;
+    $line =~ /^\.\s*$/ or do {
+      # convert any '..' at the start of a line to '.'
+      $line =~ s/^\.\././;
+      $body .= $line;
+    };
   } until $line =~ /^\.\s*$/;
   
   return wantarray ? split(/\r?\n/, $body) : $body;
