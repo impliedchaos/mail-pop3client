@@ -31,7 +31,6 @@ require Exporter;
 
 my $ID =q( $Id$ );
 $VERSION = substr q$Revision$, 10;
-$VERSION = "BOGUS!!!!";
 
 
 # Preloaded methods go here.
