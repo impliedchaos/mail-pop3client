@@ -4,7 +4,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile
   (
    'NAME'	=> 'Mail::POP3Client',
-   'DISTNAME'   => "POP3Client",
+   'DISTNAME'   => "Mail-POP3Client",
    'VERSION_FROM' => 'POP3Client.pm', # finds $VERSION
    'dist' => {
 	      COMPRESS => "gzip -9f",
