@@ -218,11 +218,13 @@ sub LocalAddr
 
 
 #******************************************************************************
-#* query the socket to use as a file handle
+#* query the socket to use as a file handle - allows you to set the
+#* socket too to allow SSL (thanks to Jamie LeTual)
 #******************************************************************************
 sub Socket {
   my $me = shift;
-  return $me->{'SOCKET'};
+  my $socket = shift or return $me->{'SOCKET'};
+  $me->{'SOCKET'} = $socket;
 }
 
 
@@ -980,6 +982,30 @@ sub Capa {
   }
 }
 
+#******************************************************************************
+#* XTND - submitted by Chris Moates (six@mox.net)
+#******************************************************************************
+sub Xtnd {
+  my $me = shift;
+  my $xtndarg = shift || '';
+
+  if ($xtndarg eq '') { 
+    $me->Message("XTND requires a string argument");
+    return;
+  }
+
+  my $s = $me->Socket();
+  $me->_checkstate('TRANSACTION', 'XTND') or return;
+  $me->Alive() or return;
+ 
+  $me->_sockprint( "XTND $xtndarg", $me->EOL );
+  my $line = $me->_sockread();
+  $line =~ /^\+OK/ or $me->Message($line) and return;
+  $line =~ s/^\+OK\s*//;
+  return $line;
+}
+
+
 
 #*****************************************************************************
 #* Check the state before issuing a command
@@ -1070,6 +1096,15 @@ Mail::POP3Client - Perl 5 module to talk to a POP3 (RFC1939) server
   $pop2->Pass( "doublesecret" );
   $pop2->Connect() >= 0 || die $pop2->Message();
   $pop2->Close();
+  # OR to use SSL...
+  my $socket = IO::Socket::SSL->new( PeerAddr => 'pop.host.com',
+                                     PeerPort => 993,
+                                     Proto    => 'tcp') || die "No socket!";
+  my $pop = Mail::POP3Client->new();
+  $pop->User('jamie');
+  $pop->Pass('secret');
+  $pop->Socket($socket);
+  $pop->Connect();
 
 =head1 DESCRIPTION
 
@@ -1184,6 +1219,11 @@ to STDERR.
 Another warning, it's impossible to differentiate between a timeout
 and a failure.
 
+new returns a valid Mail::POP3CLient object in all cases.  To test for
+a connection failure, you will need to check the number of messages:
+-1 indicates a connection error.  This will likely change sometime in
+the future to return undef on an error, setting $! as a side effect.
+This change will not happen in any 2.x version.
 
 =item I<Head>( MESSAGE_NUMBER [, PREVIEW_LINES ] )
 
@@ -1265,7 +1305,7 @@ Return true or false on whether the connection is active.
 
 =item I<Socket>
 
-Return the file descriptor for the socket.
+Return the file descriptor for the socket, or set if supplied.
 
 =item I<Size>
 
@@ -1322,6 +1362,10 @@ Indexing begins at 1 to coincide with the server's indexing.
 
 Query server capabilities, as described in RFC 2449. Returns the
 capabilities in an array. Valid in all states.
+
+=item I<XTND>
+
+Optional extended commands.  Transaction state only.
 
 =item I<Last>
 
