@@ -454,14 +454,13 @@ sub HeadAndBody
   $line =~ /^\+OK/ or $me->Message("Bad return from RETR: $line") and return;
   $line =~ /^\+OK (\d+) / and my $buflen = $1;
   
-  do {
+  while (1) {
     $line = $me->_sockread();
-    $line =~ /^\.\s*$/ or do {
-      # convert any '..' at the start of a line to '.'
-      $line =~ s/^\.\././;
-      $mandb .= $line;
-    };
-  } until $line =~ /^\.\s*$/;
+    last if $line =~ /^\.\s*$/;
+    # convert any '..' at the start of a line to '.'  
+    $line =~ s/^\.\././;  
+    $mandb .= $line;  
+  } 
   
   return wantarray ? split(/\r?\n/, $mandb) : $mandb;
   
@@ -489,14 +488,13 @@ sub Body
     $line = $me->_sockread();
   } until $line =~ /^\s*$/;
   
-  do {
+  while (1) {
     $line = $me->_sockread();
-    $line =~ /^\.\s*$/ or do {
-      # convert any '..' at the start of a line to '.'
-      $line =~ s/^\.\././;
-      $body .= $line;
-    };
-  } until $line =~ /^\.\s*$/;
+    last if $line =~ /^\.\s*$/;
+    # convert any '..' at the start of a line to '.'  
+    $line =~ s/^\.\././;  
+    $body .= $line;  
+  } 
   
   return wantarray ? split(/\r?\n/, $body) : $body;
   
