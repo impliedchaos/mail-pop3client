@@ -614,7 +614,7 @@ sub Reset {
   my $s = $me->Socket();
   $me->_sockprint( "RSET", $me->EOL );
   my $line = $me->_sockread();
-  $line =~ /\+OK .*$/ and return 1;
+  $line =~ /^\+OK/ and return 1;
   return 0;
 }
 
@@ -630,7 +630,7 @@ sub Delete {
   $me->_sockprint( "DELE $num",  $me->EOL );
   my $line = $me->_sockread();
   $me->Message($line);
-  $line =~ /^\+OK / && return 1;
+  $line =~ /^\+OK/ && return 1;
   return 0;
 }
 
