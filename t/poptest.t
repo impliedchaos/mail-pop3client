@@ -24,11 +24,17 @@ print "ok 1\n";
 #  % POPTESTACCOUNT="userid:password:pop3" make test
 
 $ENV{POPTESTACCOUNT} || do {
-  print STDERR "\nTests 2-$tests skipped, try setting POPTESTACCOUNT=user:pass:host in environment\n";
+  print STDERR "\nTests 2-$tests skipped, try setting POPTESTACCOUNT=user:pass:host in environment.\n";
   for ( $test = 2; $test <= $tests; $test++ ) {print "ok $test\n";}
 };
 
-$ENV{POPTESTACCOUNT} && do {
+($user, $pass, $host) = split( /:/, $ENV{POPTESTACCOUNT} );
+($user && $pass && $host) || do {
+  print STDERR "\nTests 2-$tests skipped, POPTESTACCOUNT=user:pass:host must use valid combination.\n";
+  for ( $test = 2; $test <= $tests; $test++ ) {print "ok $test\n";}
+};
+
+($user && $pass && $host) && do {
   ($user, $pass, $host) = split( /:/, $ENV{POPTESTACCOUNT} );
 
   my $test = 2;
