@@ -13,6 +13,7 @@
 package Mail::POP3Client;
 
 use strict;
+use warnings;
 use Carp;
 use IO::Socket qw(SOCK_STREAM);
 
@@ -324,11 +325,16 @@ sub Close
 	$me->Message("Socket read failed for QUIT");
 	# XXX: Should add the following?
 	#$me->State('DEAD');
+	undef $me->{SOCKET};
 	return 0;
     }
     $me->Message( $line );
-    close( $me->Socket() ) or $me->Message("close failed: $!") and return 0;
+    close( $me->Socket() ) or $me->Message("close failed: $!") and do {
+      undef $me->{SOCKET};
+      return 0;
+    };
     $me->State('DEAD');
+    undef $me->{SOCKET};
     $line =~ /^\+OK/i || return 0;
   }
   1;
@@ -366,6 +372,7 @@ sub Connect
         eval {
 	  require IO::Socket::SSL;
 	};
+      $@ and $me->Message("Could not load IO::Socket::SSL: $@") and return 0;
       $s = IO::Socket::SSL->new( PeerAddr => $me->Host(),
 				 PeerPort => $me->Port(),
 				 Proto    => "tcp",
@@ -461,7 +468,6 @@ sub login { Login(@_); }
 sub Login_APOP
 {
   my $me = shift;
-
   eval {
     require Digest::MD5;
   };
@@ -479,6 +485,14 @@ sub Login_APOP
   }
   chomp $line;
   $me->Message($line);
+  # some servers will close here...
+  $me->NOOP() || do {
+    $me->State('DEAD');
+    undef $me->{SOCKET};
+    $me->Message("APOP failed: server has closed the socket");
+    return 0;
+  };
+
   $line =~ /^\+OK/ or $me->Message("APOP failed: $line") and return 0;
   $me->State('TRANSACTION');
 
@@ -1044,6 +1058,22 @@ sub Xtnd {
   $line =~ /^\+OK/ or $me->Message($line) and return;
   $line =~ s/^\+OK\s*//;
   return $line;
+}
+
+#******************************************************************************
+#* NOOP - used to check socket
+#******************************************************************************
+sub NOOP {
+  my $me = shift;
+
+  my $s = $me->Socket();
+  $me->Alive() or return 0;
+ 
+  $me->_sockprint( "NOOP", $me->EOL );
+  my $line = $me->_sockread();
+#  defined( $line ) or return 0;
+  $line =~ /^\+OK/ or return 0;
+  return 1;
 }
 
 

@@ -1,6 +1,10 @@
 Revision history for Perl extension Mail::POP3Client.
 
-This is version 2.16 of Mail::POP3Client.
+This is version 2.17 of Mail::POP3Client.
+
+2.17 2005/08/19
+	+ undef $me->{SOCKET} on close.
+	+ Check $@ after eval of require IO::Socket::SSL
 
 2.16 2004/03/13
 	+ Correct documentation errors for Connect().
