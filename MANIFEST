@@ -5,3 +5,4 @@ POP3Client.pm
 README
 FAQ
 t/poptest.t
+META.yml                                 Module meta-data (added by MakeMaker)

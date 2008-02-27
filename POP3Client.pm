@@ -4,7 +4,7 @@
 # Description:  POP3Client module - acts as interface to POP3 server
 # Author:       Sean Dowd <pop3client@dowds.net>
 #
-# Copyright (c) 1999-2003  Sean Dowd.  All rights reserved.
+# Copyright (c) 1999-2008  Sean Dowd.  All rights reserved.
 # This module is free software; you can redistribute it and/or modify
 # it under the same terms as Perl itself.
 #
@@ -408,7 +408,8 @@ sub Connect
   $me->Message($msg);
   $msg =~ /^\+OK/i || return 0;
 
-  $me->{MESG_ID}= $1 if ($msg =~ /(<[\w\d\-\.]+\@[\w\d\-\.]+>)/);
+  my $atom = qr([-_\w!#$%&'*+/=?^`{|}~]+);
+  $me->{MESG_ID}= $1 if ($msg =~/(<$atom(?:\.$atom)*\@$atom(?:\.$atom)*>)/o);
   $me->Message($msg);
 
   $me->State('AUTHORIZATION');
@@ -666,6 +667,7 @@ sub message_string { HeadAndBody(@_); }
 #******************************************************************************
 sub HeadAndBodyToFile
 {
+  local ($, , $\);
   my $me = shift;
   my $fh = shift;
   my $num = shift;
@@ -752,6 +754,7 @@ sub Body
 #******************************************************************************
 sub BodyToFile
 {
+  local ($, , $\);
   my $me = shift;
   my $fh = shift;
   my $num = shift;
@@ -1121,6 +1124,7 @@ sub _checkstate
 #*****************************************************************************
 sub _sockprint
 {
+  local ($, , $\);
   my $me = shift;
   my $s = $me->Socket();
   $me->Debug and Carp::carp "POP3 -> ", @_;
