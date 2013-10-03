@@ -1525,6 +1525,11 @@ CRAM-MD5 needs Digest::HMAC_MD5 and MIME::Base64.
 
 Sean Dowd <pop3client@dowds.net>
 
+=head1 COPYRIGHT
+
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
+
 =head1 CREDITS
 
 Based loosely on News::NNTPClient by Rodger Anderson
