@@ -1,13 +1,29 @@
+use strict;
+use warnings;
+
+use 5.006001;
+
 use ExtUtils::MakeMaker;
-# See lib/ExtUtils/MakeMaker.pm for details of how to influence
-# the contents of the Makefile that is written.
+
 WriteMakefile
   (
-   'NAME'	=> 'Mail::POP3Client',
-   'DISTNAME'   => "Mail-POP3Client",
-   'VERSION_FROM' => 'POP3Client.pm', # finds $VERSION
+   'NAME'	        => 'Mail::POP3Client',
+   'ABSTRACT'           => 'Perl 5 module to talk to a POP3 (RFC1939) server',
+   'AUTHOR'             => 'Sean Dowd <pop3client@dowds.net>',
+   'DISTNAME'           => "Mail-POP3Client",
+   'VERSION_FROM'       => 'lib/Mail/POP3Client.pm',
+   'LICENSE'            => 'perl',
+   'MIN_PERL_VERSION'   => '5.6.1',
+   'BUILD_REQUIRES'     => {},
+   'CONFIGURE_REQUIRES' => {
+     "ExtUtils::MakeMaker" => "6.30"
+   },
+   'LIBS'               => [''], # e.g., '-lm'
    'dist' => {
 	      COMPRESS => "gzip -9f",
 	      SUFFIX => "gz",
-	     }
+	     },
+  "test" => {
+    "TESTS" => "t/*.t"
+  },
   );
