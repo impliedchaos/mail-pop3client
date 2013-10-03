@@ -1,8 +1,10 @@
 Changes
-MANIFEST
-Makefile.PL
-POP3Client.pm
-README
 FAQ
+lib/Mail/POP3Client.pm
+Makefile.PL
+MANIFEST
+META.yml			Module meta-data (added by MakeMaker)
+README
+t/pod.t
 t/poptest.t
-META.yml                                 Module meta-data (added by MakeMaker)
+t/version.t
