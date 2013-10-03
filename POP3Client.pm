@@ -1,5 +1,4 @@
 #******************************************************************************
-# $Id$
 #
 # Description:  POP3Client module - acts as interface to POP3 server
 # Author:       Sean Dowd <pop3client@dowds.net>
@@ -25,12 +24,9 @@ require Exporter;
 # Items to export into callers namespace by default. Note: do not export
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
-@EXPORT = qw(
+@EXPORT = qw();
 
-);
-
-my $ID =q( $Id$ );
-$VERSION = substr q$Revision$, 10;
+$VERSION = '2.19';
 
 
 # Preloaded methods go here.

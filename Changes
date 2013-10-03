@@ -1,6 +1,9 @@
 Revision history for Perl extension Mail::POP3Client.
 
-This is version 2.18 of Mail::POP3Client.
+This is version 2.19 of Mail::POP3Client.
+
+2.19 2013/19/03
+        + RT82713 - version number contains a space.
 
 2.18 2008/02/11
 	+ update message ID regular expression for Dovecot APOP authentication.
