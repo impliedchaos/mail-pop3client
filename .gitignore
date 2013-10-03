@@ -1,0 +1,8 @@
+Makefile
+blib
+pm_to_blib
+MYMETA.*
+*.tmp
+*.bak
+*.sqp
+/Mail-POP3Client-*
