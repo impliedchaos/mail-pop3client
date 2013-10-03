@@ -26,4 +26,9 @@ WriteMakefile
   "test" => {
     "TESTS" => "t/*.t"
   },
+  META_MERGE => {
+    resources => {
+      repository => 'https://github.com/ssdowd/mail-pop3client',
+    },
+  },
   );
