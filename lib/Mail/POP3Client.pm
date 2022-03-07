@@ -450,6 +450,9 @@ sub Login
   elsif ($me->{AUTH_MODE} eq 'CRAM-MD5') {
     return($me->Login_CRAM_MD5());
   }
+  elsif ($me->{AUTH_MODE) eq 'XOAUTH2') {
+    return($me->Login_XOAUTH2());
+  }
   elsif ($me->{AUTH_MODE} ne 'PASS') {
     $me->Message("Programing error. AUTH_MODE (".$me->{AUTH_MODE}.") not BEST | APOP | CRAM-MD5 | PASS.");
     return(0);
@@ -533,6 +536,46 @@ sub Login_CRAM_MD5
     $me->Message("AUTH CRAM-MD5 failed: $line") and return 0;
   }
 
+  $me->State('TRANSACTION');
+
+  $me->POPStat() or return 0;
+}
+
+
+#******************************************************************************
+#* login to the POP server using XOAUTH2 (Google's non-standard) authentication.
+#  Password should be recently retrieved OAuth bearer token.
+#******************************************************************************
+sub Login_XOAUTH2
+{
+  my $me = shift;
+
+  eval {
+    require MIME::Base64;
+  };
+  $@ and $me->Message("AUTH XOAUTH2 failed: $@") and return 0;
+
+  $me->_checkstate('AUTHORIZATION', 'AUTH') or return 0;
+  my $encstr = "user=" . $me->User() . "\1auth=Bearer " . $me->Pass() . "\1\1";
+  (my $token =  MIME::Base64::encode($encstr)) =~ s/[\r\n]//g;
+  $me->_sockprint('AUTH XOAUTH2 ', $token, $me->EOL());
+  my $line = $me->_sockread();
+  unless (defined $line) {
+      $me->Message("Socket read failed for XOAUTH2");
+      $me->State('AUTHORIZATION');
+      return 0;
+  }
+  chomp $line;
+  $me->Message($line);
+  # some servers will close here...
+  $me->NOOP() || do {
+    $me->State('DEAD');
+    undef $me->{SOCKET};
+    $me->Message("XOAUTH2 failed: server has closed the socket");
+    return 0;
+  };
+
+  $line =~ /^\+OK/ or $me->Message("XOAUTH2 failed: $line") and return 0;
   $me->State('TRANSACTION');
 
   $me->POPStat() or return 0;
